@@ -1,6 +1,7 @@
 import json
 import plotly
 import pandas as pd
+import re
 
 from nltk.stem import WordNetLemmatizer
 from nltk.tokenize import word_tokenize
@@ -15,9 +16,11 @@ from sqlalchemy import create_engine
 app = Flask(__name__)
 
 def tokenize(text):
+    text = re.sub(r"[^a-zA-Z0-9]"," ", text)     
     tokens = word_tokenize(text)
+    tokens = [w for w in tokens if w not in stopwords.words("english")]
     lemmatizer = WordNetLemmatizer()
-
+    
     clean_tokens = []
     for tok in tokens:
         clean_tok = lemmatizer.lemmatize(tok).lower().strip()
@@ -26,11 +29,11 @@ def tokenize(text):
     return clean_tokens
 
 # load data
-engine = create_engine('sqlite:///../data/YourDatabaseName.db')
-df = pd.read_sql_table('YourTableName', engine)
+engine = create_engine('sqlite:///../data/DisasterResponse.db')
+df = pd.read_sql_table('DisasterResponse', engine)
 
 # load model
-model = joblib.load("../models/your_model_name.pkl")
+model = joblib.load("../models/classifier.pkl")
 
 
 # index webpage displays cool visuals and receives user input text for model
@@ -42,6 +45,17 @@ def index():
     # TODO: Below is an example - modify to extract data for your own visuals
     genre_counts = df.groupby('genre').count()['message']
     genre_names = list(genre_counts.index)
+
+    df_sum = df.sum()
+    feat = ['request', 'offer', 'aid_related', 'medical_help', 'medical_products', 'search_and_rescue',
+       'security', 'military', 'child_alone', 'water', 'food', 'shelter',
+       'clothing', 'money', 'missing_people', 'refugees', 'death', 'other_aid',
+       'infrastructure_related', 'transport', 'buildings', 'electricity',
+       'tools', 'hospitals', 'shops', 'aid_centers', 'other_infrastructure',
+       'weather_related', 'floods', 'storm', 'fire', 'earthquake', 'cold',
+       'other_weather', 'direct_report']
+    class_count = (soma[feat]/len(df)).sort_values()
+    
     
     # create visuals
     # TODO: Below is an example - modify to create your own visuals
@@ -63,7 +77,27 @@ def index():
                     'title': "Genre"
                 }
             }
+        },
+        {'data': [
+                Bar(
+                    x=feat,
+                    y=class_count
+                )
+            ],
+
+            'layout': {
+                'title': 'Proportion of Messages <br> by Category',
+                'yaxis': {
+                    'title': "Proportion",
+                    'automargin':True
+                },
+                'xaxis': {
+                    'tickangle': -40,
+                    'automargin':True
+                }
+            }
         }
+
     ]
     
     # encode plotly graphs in JSON
