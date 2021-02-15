@@ -31,7 +31,7 @@ There are two .csv files with the used data
 
 ## Results<a name="results"></a>
 
-The main findings of the code can be found at the post available [here](https://medium.com/@lucas.pontesm/how-much-one-can-make-with-airbnb-in-bristol-uk-an-exploratory-analysis-52e38ea7fc0b?source=friends_link&sk=994f1b81690d02d2aea7a934b757f665).
+The main findings of the code can be found at the post available [here](https://medium.com/how-much-can-one-make-with-airbnb-in-bristol-uk-an/how-much-can-one-make-with-airbnb-in-bristol-uk-an-exploratory-analysis-7363f2f6452).
 
 ## Licensing, Authors, Acknowledgements<a name="licensing"></a>
 
